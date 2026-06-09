@@ -103,8 +103,23 @@ def registrar_consumo(cnpj: str, litros_str: str, kwh_str: str) -> bool:
            do novo consumo (um mini-dicionário contendo litros e kWh convertidos para float)
            na lista 'consumos'.
     """
-    # TODO: Implementar try-except, validações de valores negativos e append na lista de consumos
-    pass
+    if cnpj not in banco_dados:
+        print(f"Erro: CNPJ '{cnpj}' não encontrado.")
+        return False
+
+    try:
+        litros = float(litros_str)
+        kwh = float(kwh_str)
+    except ValueError:
+        print("Erro: Os valores de consumo devem ser números válidos.")
+        return False
+
+    if litros < 0 or kwh < 0:
+        print("Erro: Os valores de consumo não podem ser negativos.")
+        return False
+
+    banco_dados[cnpj]["consumos"].append({"litros": litros, "kwh": kwh})
+    return True
 
 
 # ==============================================================================
@@ -126,8 +141,18 @@ def atualizar_frota(cnpj: str, nova_frota_str: str) -> bool:
         2. Tratar exceção try-except para garantir que a nova frota é um número inteiro válido.
         3. Reescrever diretamente o valor da chave existente: banco_dados[cnpj]["frota"] = nova_frota.
     """
-    # TODO: Implementar a reescrita do valor da frota no dicionário
-    pass
+    if cnpj not in banco_dados:
+        print(f"Erro: CNPJ '{cnpj}' não encontrado.")
+        return False
+
+    try:
+        nova_frota = int(nova_frota_str)
+    except ValueError:
+        print(f"Erro: '{nova_frota_str}' não é um número inteiro válido para a frota.")
+        return False
+
+    banco_dados[cnpj]["frota"] = nova_frota
+    return True
 
 
 def excluir_empresa(cnpj: str) -> bool:
@@ -146,5 +171,10 @@ def excluir_empresa(cnpj: str) -> bool:
            banco_dados.pop(cnpj).
         3. Informar ao usuário se a empresa foi removida com sucesso.
     """
-    # TODO: Implementar a exclusão segura com pop()
-    pass
+    if cnpj not in banco_dados:
+        print(f"Erro: CNPJ '{cnpj}' não encontrado.")
+        return False
+
+    banco_dados.pop(cnpj)
+    print(f"Empresa com CNPJ '{cnpj}' removida com sucesso.")
+    return True
