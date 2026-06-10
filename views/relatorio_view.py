@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """
 MÓDULO: views/relatorio_view.py
 RESPONSÁVEL: Pessoa 5 (Relatórios - Read)
@@ -9,6 +8,7 @@ Este módulo é responsável por exibir os relatórios de emissões das empresas
 
 from database.db import banco_dados
 from controllers.calculadora_controller import calcular_co2  # Desenvolvido pela Pessoa 2
+from utils.validators import limpar_cnpj
 
 
 def gerar_relatorio(cnpj: str):
@@ -17,26 +17,61 @@ def gerar_relatorio(cnpj: str):
     
     Parâmetros:
         cnpj (str): CNPJ da empresa cujo relatório deve ser gerado.
-        
-    Desafios/Foco Técnico para Pessoa 5:
-        1. Tratar erros caso o CNPJ buscado não exista no dicionário (utilizar bloco try-except KeyError).
-        2. Obter a lista de consumos da empresa a partir do dicionário 'banco_dados'.
-        3. Criar um loop (for) para percorrer o histórico de consumos da empresa.
-        4. Dentro do loop, chamar a função 'calcular_co2(litros, kwh)' (Pessoa 2)
-           para cada item e acumular/somar o total das emissões.
-        5. Exibir os resultados de forma formatada e visualmente limpa (ex: tabelas simples, 
-           somatórios e a frota de veículos cadastrada).
     """
-    # TODO: Pessoa 5 deve implementar a busca no dict, try-except KeyError, o loop e a exibição
-    # Estrutura sugerida:
-    # try:
-    #     empresa = banco_dados[cnpj]
-    #     total_co2 = 0.0
-    #     # loop pelos consumos
-    #     for consumo in empresa["consumos"]:
-    #         total_co2 += calcular_co2(consumo["litros"], consumo["kwh"])
-    #     exibir_relatorio_formatado(empresa, total_co2)
-    # except KeyError:
-    #     exibir_mensagem_de_erro_cnpj_nao_encontrado()
+    cnpj_limpo = limpar_cnpj(cnpj)
     
-    pass
+    try:
+        empresa = banco_dados[cnpj_limpo]
+    except KeyError:
+        print("\n" + "=" * 60)
+        print("  ERRO: CNPJ NÃO ENCONTRADO  ".center(60, "!"))
+        print("=" * 60)
+        print(f"Não encontramos nenhuma empresa cadastrada com o CNPJ: {cnpj}")
+        print("=" * 60 + "\n")
+        return
+
+    # CNPJ Formatado para exibição: XX.XXX.XXX/XXXX-XX
+    if len(cnpj_limpo) == 14:
+        cnpj_fmt = f"{cnpj_limpo[0:2]}.{cnpj_limpo[2:5]}.{cnpj_limpo[5:8]}/{cnpj_limpo[8:12]}-{cnpj_limpo[12:14]}"
+    else:
+        cnpj_fmt = cnpj_limpo
+
+    print("\n" + "=" * 65)
+    print(" CARBONWISE - RELATÓRIO DE EMISSÕES DE CO2 ".center(65, "="))
+    print("=" * 65)
+    print(f"  Razão Social: {empresa['nome']}")
+    print(f"  CNPJ:         {cnpj_fmt}")
+    print(f"  Frota Ativa:  {empresa['frota']} veículo(s)")
+    print("=" * 65)
+    
+    consumos = empresa.get("consumos", [])
+    if not consumos:
+        print("  Sem registros de consumo cadastrados para esta empresa.".center(65))
+        print("=" * 65 + "\n")
+        return
+
+    print("  HISTÓRICO DE CONSUMOS E EMISSÕES".center(65))
+    print("-" * 65)
+    print(f"  {'Medição':<10} | {'Combustível (L)':<16} | {'Energia (kWh)':<14} | {'CO2 (tCO2e)':<12}")
+    print("-" * 65)
+    
+    total_litros = 0.0
+    total_kwh = 0.0
+    total_co2 = 0.0
+    
+    for i, consumo in enumerate(consumos, 1):
+        litros = consumo["litros"]
+        kwh = consumo["kwh"]
+        co2 = calcular_co2(litros, kwh)
+        
+        total_litros += litros
+        total_kwh += kwh
+        total_co2 += co2
+        
+        print(f"  {f'#{i}':<10} | {litros:<16.2f} | {kwh:<14.2f} | {co2:<12.4f}")
+        
+    print("-" * 65)
+    print(f"  {'TOTAL':<10} | {total_litros:<16.2f} | {total_kwh:<14.2f} | {total_co2:<12.4f}")
+    print("=" * 65)
+    print(f"  Pegada de Carbono Acumulada: {total_co2:.4f} tCO2e".center(65))
+    print("=" * 65 + "\n")

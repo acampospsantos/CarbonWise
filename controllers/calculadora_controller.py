@@ -27,10 +27,11 @@ def calcular_co2(litros_combustivel: float, kwh_energia: float) -> float:
           * Eletricidade: ~0.1 kg CO2 por kWh
           * Lembre-se de converter o resultado final de kg para toneladas (dividir por 1000).
     """
-    # TODO: Pessoa 2 deve implementar a fórmula matemática exata aqui
-    # Exemplo de rascunho:
-    # emissao_litros = litros_combustivel * FATOR_COMBUSTIVEL
-    # emissao_kwh = kwh_energia * FATOR_ENERGIA
-    # total_toneladas = (emissao_litros + emissao_kwh) / 1000
+    fator_combustivel = 2.3  # kg CO2 por litro
+    fator_energia = 0.1      # kg CO2 por kWh
     
-    pass
+    emissao_litros = litros_combustivel * fator_combustivel
+    emissao_kwh = kwh_energia * fator_energia
+    
+    total_toneladas = (emissao_litros + emissao_kwh) / 1000
+    return total_toneladas

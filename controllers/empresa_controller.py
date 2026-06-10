@@ -8,6 +8,7 @@ cadastradas no dicionário global.
 """
 
 from database.db import banco_dados
+from utils.validators import limpar_cnpj, validar_cnpj_formato
 
 # ==============================================================================
 # PESSOA 3: Cadastro Inicial (Create)
@@ -23,17 +24,32 @@ def cadastrar_empresa(cnpj: str, nome: str, frota_str: str) -> bool:
         
     Retorna:
         bool: True se cadastrada com sucesso, False caso contrário.
-        
-    Desafios/Foco Técnico para Pessoa 3:
-        1. Utilizar bloco try-except para converter 'frota_str' para um número inteiro.
-           Se falhar (ValueError), exibir mensagem de erro e não cadastrar.
-        2. Evitar o cadastro de CNPJs duplicados. Verificar se o 'cnpj' já existe
-           como chave no dicionário 'banco_dados'.
-        3. Criar a estrutura interna da empresa (ex: dicionário com chaves 'nome',
-           'frota' e uma lista vazia de 'consumos').
     """
-    # TODO: Implementar try-except para frota e verificação de duplicidade de CNPJ
-    pass
+    cnpj_limpo = limpar_cnpj(cnpj)
+    
+    if not validar_cnpj_formato(cnpj_limpo):
+        print("Erro: O CNPJ fornecido é inválido.")
+        return False
+        
+    if cnpj_limpo in banco_dados:
+        print("Erro: Uma empresa com este CNPJ já está cadastrada.")
+        return False
+        
+    try:
+        frota_int = int(frota_str)
+        if frota_int < 0:
+            print("Erro: A quantidade de veículos na frota não pode ser negativa.")
+            return False
+    except ValueError:
+        print("Erro: A frota de veículos deve ser um número inteiro válido.")
+        return False
+        
+    banco_dados[cnpj_limpo] = {
+        "nome": nome,
+        "frota": frota_int,
+        "consumos": []
+    }
+    return True
 
 
 # ==============================================================================
@@ -50,18 +66,28 @@ def registrar_consumo(cnpj: str, litros_str: str, kwh_str: str) -> bool:
         
     Retorna:
         bool: True se o consumo foi registrado com sucesso, False caso contrário.
-        
-    Desafios/Foco Técnico para Pessoa 4:
-        1. Tratar exceções (try-except ValueError) para impedir que o usuário digite
-           letras ou símbolos no lugar de números.
-        2. Impedir que o usuário digite valores de consumo negativos (ex: litros < 0 ou kwh < 0).
-           Se for negativo, disparar ou tratar como erro de valor.
-        3. Buscar a empresa pelo 'cnpj' no dicionário 'banco_dados' e fazer o append
-           do novo consumo (um mini-dicionário contendo litros e kWh convertidos para float)
-           na lista 'consumos'.
     """
-    # TODO: Implementar try-except, validações de valores negativos e append na lista de consumos
-    pass
+    cnpj_limpo = limpar_cnpj(cnpj)
+    
+    if cnpj_limpo not in banco_dados:
+        print("Erro: Empresa não encontrada para o CNPJ fornecido.")
+        return False
+        
+    try:
+        litros_float = float(litros_str)
+        kwh_float = float(kwh_str)
+        if litros_float < 0 or kwh_float < 0:
+            print("Erro: Os valores de consumo de combustível e energia não podem ser negativos.")
+            return False
+    except ValueError:
+        print("Erro: Os valores de consumo devem ser números válidos.")
+        return False
+        
+    banco_dados[cnpj_limpo]["consumos"].append({
+        "litros": litros_float,
+        "kwh": kwh_float
+    })
+    return True
 
 
 # ==============================================================================
@@ -77,14 +103,24 @@ def atualizar_frota(cnpj: str, nova_frota_str: str) -> bool:
         
     Retorna:
         bool: True se atualizado com sucesso, False caso contrário.
-        
-    Desafios/Foco Técnico para Pessoa 6:
-        1. Verificar se o CNPJ existe no dicionário.
-        2. Tratar exceção try-except para garantir que a nova frota é um número inteiro válido.
-        3. Reescrever diretamente o valor da chave existente: banco_dados[cnpj]["frota"] = nova_frota.
     """
-    # TODO: Implementar a reescrita do valor da frota no dicionário
-    pass
+    cnpj_limpo = limpar_cnpj(cnpj)
+    
+    if cnpj_limpo not in banco_dados:
+        print("Erro: Empresa não encontrada para o CNPJ fornecido.")
+        return False
+        
+    try:
+        nova_frota_int = int(nova_frota_str)
+        if nova_frota_int < 0:
+            print("Erro: A quantidade de veículos na frota não pode ser negativa.")
+            return False
+    except ValueError:
+        print("Erro: A frota de veículos deve ser um número inteiro válido.")
+        return False
+        
+    banco_dados[cnpj_limpo]["frota"] = nova_frota_int
+    return True
 
 
 def excluir_empresa(cnpj: str) -> bool:
@@ -96,12 +132,13 @@ def excluir_empresa(cnpj: str) -> bool:
         
     Retorna:
         bool: True se excluída com sucesso, False caso contrário.
-        
-    Desafios/Foco Técnico para Pessoa 6:
-        1. Verificar se o CNPJ existe no dicionário.
-        2. Usar o método pop() para deletar o registro do dicionário de forma segura:
-           banco_dados.pop(cnpj).
-        3. Informar ao usuário se a empresa foi removida com sucesso.
     """
-    # TODO: Implementar a exclusão segura com pop()
-    pass
+    cnpj_limpo = limpar_cnpj(cnpj)
+    
+    if cnpj_limpo not in banco_dados:
+        print("Erro: Empresa não encontrada para o CNPJ fornecido.")
+        return False
+        
+    banco_dados.pop(cnpj_limpo)
+    print("Sucesso: Empresa removida com sucesso.")
+    return True

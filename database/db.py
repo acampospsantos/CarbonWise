@@ -20,7 +20,15 @@ e seus respectivos consumos.
 #         ]
 #     }
 # }
-banco_dados = {}
-
-# O/A Maestro(a) (Pessoa 1) deve garantir que esta variável esteja disponível
-# para importação nos demais módulos de controle (controllers) e visualização (views).
+# Banco de dados inicializado com uma empresa fictícia para fins de demonstração
+banco_dados = {
+    "12345678000195": {
+        "nome": "EcoTransportes S.A.",
+        "frota": 12,
+        "consumos": [
+            {"litros": 1500.0, "kwh": 4200.0},
+            {"litros": 1350.0, "kwh": 3900.0},
+            {"litros": 1600.0, "kwh": 4500.0}
+        ]
+    }
+}

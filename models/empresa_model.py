@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """
 MÓDULO: models/empresa_model.py
 RESPONSÁVEIS: Equipe (Orientado pela Pessoa 1 e Pessoa 3)

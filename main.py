@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """
 MÓDULO: main.py
 RESPONSÁVEL: Pessoa 1 (Integração e Menu - Maestro/a)
