@@ -49,6 +49,7 @@ def cadastrar_empresa(cnpj: str, nome: str, frota_str: str) -> bool:
         "frota": frota_int,
         "consumos": []
     }
+    print(f"Empresa {nome} cadastrada com sucesso!\n")
     return True
 
 
@@ -87,6 +88,7 @@ def registrar_consumo(cnpj: str, litros_str: str, kwh_str: str) -> bool:
         "litros": litros_float,
         "kwh": kwh_float
     })
+    print("Sucesso: Registro de consumo realizado com sucesso.")
     return True
 
 
@@ -120,6 +122,7 @@ def atualizar_frota(cnpj: str, nova_frota_str: str) -> bool:
         return False
         
     banco_dados[cnpj_limpo]["frota"] = nova_frota_int
+    print("Sucesso: Atualização da frota realizada com sucesso.")
     return True
 
 
