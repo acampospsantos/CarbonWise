@@ -93,3 +93,33 @@ def menu_principal():
             break
         else:
             print("\nOpção inválida! Escolha um número correspondente às opções do menu.\n")
+
+
+def exibir_opcoes_do_menu():
+    """
+    Exibe as opções do menu no console.
+    """
+    print("=" * 60)
+    print(" CARBONWISE - SISTEMA DE INVENTÁRIO DE CO2 ".center(60, "="))
+    print("=" * 60)
+    print("  [1] Cadastrar Empresa")
+    print("  [2] Ver Benefícios da Aplicação")
+    print("  [3] Registrar Consumo (Combustível & Energia)")
+    print("  [4] Atualizar Frota de Veículos")
+    print("  [5] Excluir Empresa")
+    print("  [6] Gerar Relatório de Emissões")
+    print("  [0] Sair")
+    print("=" * 60)
+
+
+def beneficiosAplicacao():
+    """
+    Exibe os benefícios ambientais e corporativos da aplicação.
+    """
+    print("\n" + "-" * 60)
+    print(" BENEFÍCIOS DA APLICAÇÃO ".center(60, "-"))
+    print("-" * 60)
+    print("- Meça suas Emissões: Calcule automaticamente sua pegada de carbono com base nos dados operacionais da empresa")
+    print("- Reduza o impacto: Receba um plano de ação personalizado com estratégias para reduzir emissões e custos")
+    print("- Gere relatórios ESG: Relatórios profissionais prontos para investidores, licitações e compliance ambiental")
+    print("-" * 60 + "\n")

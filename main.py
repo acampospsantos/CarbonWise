@@ -54,9 +54,12 @@ def main():
             atualizar_frota(cnpj_empresa, nova_frota)
             
         elif opcao == "5":
-            cnpj_empresa = input('CNPJ da empresa: ')
-            
+            cnpj_empresa = input('CNPJ da empresa a ser excluída: ')
             excluir_empresa(cnpj_empresa)
+            
+        elif opcao == "6":
+            cnpj_empresa = input('CNPJ da empresa: ')
+            gerar_relatorio(cnpj_empresa)
             
         elif opcao == "0":
             break
