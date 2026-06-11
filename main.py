@@ -63,6 +63,9 @@ def main():
             
         elif opcao == "0":
             break
+        
+        else:
+            print('## Digite uma opção válida ##\n')
 
 if __name__ == "__main__":
     try:
